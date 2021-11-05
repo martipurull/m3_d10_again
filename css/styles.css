@@ -126,4 +126,16 @@ input[type="checkbox"] {
     
 }
 
+.cold-md-2 img {
+    max-width: 320px;
+    max-height: 180px;
+    object-fit: cover;
+}
+
+a + h6 {
+    text-align: center;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    color: rgb(199, 199, 199);
+}
  
