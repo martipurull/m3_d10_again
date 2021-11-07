@@ -312,37 +312,70 @@
         crossorigin="anonymous"></script>
     <script>
         let movieGenres = []
-        let horrorMovies = []
-        let comedyMovies = []
-        let thrillerMovies = []
-        let documentaryMovies = []
-        let sportsMovies = []
-        let dramaMovies = []
         let loadedMovies = []
 
         const mainMovieUrl = 'https://striveschool-api.herokuapp.com/api/movies/'
-
-
-
-        const loadMovieGenres = async () => {
-            const response = await fetch(mainMovieUrl, {
-                headers: {
-                    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyOGY4NmFhY2FhMjAwMTU1MmExODAiLCJpYXQiOjE2MzYxMTA0NTYsImV4cCI6MTYzNzMyMDA1Nn0.NA9N1AiPuXFUB3_WEBqLDq3ZYyytJGVBvrxxURHGKpE"
-                }
-            })
-            const arrayOfGenres = await response.json()
-            return arrayOfGenres
+        const headers = {
+            headers: {
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyOGY4NmFhY2FhMjAwMTU1MmExODAiLCJpYXQiOjE2MzYxMTA0NTYsImV4cCI6MTYzNzMyMDA1Nn0.NA9N1AiPuXFUB3_WEBqLDq3ZYyytJGVBvrxxURHGKpE"
+            }
         }
 
-        const loadMoviesByGenre = async (genre) => {
-            const response = await fetch(mainMovieUrl + genre, {
-                headers: {
-                    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyOGY4NmFhY2FhMjAwMTU1MmExODAiLCJpYXQiOjE2MzYxMTA0NTYsImV4cCI6MTYzNzMyMDA1Nn0.NA9N1AiPuXFUB3_WEBqLDq3ZYyytJGVBvrxxURHGKpE"
-                }
-            })
-            const arrayOfMovieObjects = response.json()
-            return arrayOfMovieObjects
+
+
+        const loadMovies = async () => {
+            const response = await fetch(mainMovieUrl, headers)
+
+            if (response.ok) {
+                const arrayOfCategories = await response.json()
+                console.log(arrayOfCategories)
+                const arrayOfMovies = await Promise.all(arrayOfCategories.map(async (category) => {
+                    const res = await fetch(mainMovieUrl + category, headers)
+                    return await res.json()
+                }))
+                loadedMovies = arrayOfMovies.flat(2)
+            }
         }
+
+        window.onload = async () => {
+            try {
+                await loadMovies()
+                console.log(loadedMovies)
+                await displayMovies()
+            } catch (error) {
+                consoel.log(error)
+            }
+
+
+
+        }
+
+
+
+
+
+
+
+
+        // const loadMovieGenres = async () => {
+        //     const response = await fetch(mainMovieUrl, {
+        //         headers: {
+        //             "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyOGY4NmFhY2FhMjAwMTU1MmExODAiLCJpYXQiOjE2MzYxMTA0NTYsImV4cCI6MTYzNzMyMDA1Nn0.NA9N1AiPuXFUB3_WEBqLDq3ZYyytJGVBvrxxURHGKpE"
+        //         }
+        //     })
+        //     const arrayOfGenres = await response.json()
+        //     return arrayOfGenres
+        // }
+
+        // const loadMoviesByGenre = async (genre) => {
+        //     const response = await fetch(mainMovieUrl + genre, {
+        //         headers: {
+        //             "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyOGY4NmFhY2FhMjAwMTU1MmExODAiLCJpYXQiOjE2MzYxMTA0NTYsImV4cCI6MTYzNzMyMDA1Nn0.NA9N1AiPuXFUB3_WEBqLDq3ZYyytJGVBvrxxURHGKpE"
+        //         }
+        //     })
+        //     const arrayOfMovieObjects = response.json()
+        //     return arrayOfMovieObjects
+        // }
 
         const displayMovies = () => {
             const trendingRow1 = document.getElementById('trendingRow1')
@@ -408,45 +441,45 @@
             }
         }
 
-        const showSpinner = (isLoading) => {
-            const mainContainer = document.getElementById('.genre-details')
+        // const showSpinner = (isLoading) => {
+        //     const mainContainer = document.getElementById('.genre-details')
 
-            const spinner = `<div class="spinner-border" role="status"></div>`
-            if (isLoading) {
-                mainContainer.innerHTML += spinner
-            } else {
-                mainContainer.querySelector('.spinner-border').remove()
-            }
-        }
-
-
-        window.onload = async () => {
-            try {
-                movieGenres = await loadMovieGenres()
-
-                horrorMovies = await loadMoviesByGenre('horror')
-                horrorMovies.forEach(movie => loadedMovies.push(movie))
-                comedyMovies = await loadMoviesByGenre('comedy')
-                comedyMovies.forEach(movie => loadedMovies.push(movie))
-                thrillerMovies = await loadMoviesByGenre('thriller')
-                thrillerMovies.forEach(movie => loadedMovies.push(movie))
-                documentaryMovies = await loadMoviesByGenre('documentary')
-                documentaryMovies.forEach(movie => loadedMovies.push(movie))
-                sportsMovies = await loadMoviesByGenre('sports')
-                sportsMovies.forEach(movie => loadedMovies.push(movie))
-                dramaMovies = await loadMoviesByGenre('drama')
-                dramaMovies.forEach(movie => loadedMovies.push(movie))
-
-                console.log(loadedMovies)
-
-                displayMovies()
+        //     const spinner = `<div class="spinner-border" role="status"></div>`
+        //     if (isLoading) {
+        //         mainContainer.innerHTML += spinner
+        //     } else {
+        //         mainContainer.querySelector('.spinner-border').remove()
+        //     }
+        // }
 
 
-            } catch (error) {
-                console.log(error)
-            }
+        // window.onload = async () => {
+        //     try {
+        //         movieGenres = await loadMovieGenres()
 
-        }
+        //         horrorMovies = await loadMoviesByGenre('horror')
+        //         horrorMovies.forEach(movie => loadedMovies.push(movie))
+        //         comedyMovies = await loadMoviesByGenre('comedy')
+        //         comedyMovies.forEach(movie => loadedMovies.push(movie))
+        //         thrillerMovies = await loadMoviesByGenre('thriller')
+        //         thrillerMovies.forEach(movie => loadedMovies.push(movie))
+        //         documentaryMovies = await loadMoviesByGenre('documentary')
+        //         documentaryMovies.forEach(movie => loadedMovies.push(movie))
+        //         sportsMovies = await loadMoviesByGenre('sports')
+        //         sportsMovies.forEach(movie => loadedMovies.push(movie))
+        //         dramaMovies = await loadMoviesByGenre('drama')
+        //         dramaMovies.forEach(movie => loadedMovies.push(movie))
+
+        //         console.log(loadedMovies)
+
+        //         displayMovies()
+
+
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+
+        // }
 
     </script>
 </body>
